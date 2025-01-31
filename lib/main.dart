@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/services.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -22,23 +24,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  BitmapDescriptor customIcon;
-  Set<Marker> markers;
+  late BitmapDescriptor customIcon;
+  late Set<Marker> markers;
   @override
   void initState() {
     super.initState();
     markers = Set.from([]);
   }
 
-  createMarker(context) {
-    if (customIcon == null) {
-      ImageConfiguration configuration = createLocalImageConfiguration(context);
-      BitmapDescriptor.fromAssetImage(configuration, 'assets/fd.png')
-          .then((icon) {
-        setState(() {
-          customIcon = icon;
-        });
-      });
+  createMarker(context) async {
+  if (customIcon == null) {
+    final ByteData data = await rootBundle.load('assets/fd.png');
+    final Uint8List bytes = data.buffer.asUint8List();
+    setState(() {
+      customIcon = BitmapDescriptor.fromBytes(bytes);
+    });
     }
   }
 
